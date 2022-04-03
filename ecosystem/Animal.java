@@ -65,11 +65,6 @@ public abstract class Animal {
 		this.currentLocation = nextLocation;
 	}
 	
-	public void revertChangeToLocation() {
-		this.currentLocation = lastLocation;
-		
-	}
-	
 	public Map<Integer, Animal> interactWith(Animal animal) {
 		Map<Integer, Animal> result;
 		if (animal instanceof Predator)
@@ -88,16 +83,11 @@ public abstract class Animal {
 	protected abstract Animal makeChild();
 	
 	protected Map<Integer, Animal> interactWithSameType(Animal animal) {
-		this.stay();
-		
-		//return makeChild();
-		
 		stay();
 		Map<Integer, Animal> result = new LinkedHashMap<>();
 		result.put(this.currentLocation, this);
-		result.put(animal.currentLocation, animal);
-		Animal newCub = makeChild();
-		result.put(null, newCub);
+		Animal newChild = makeChild();
+		result.put(null, newChild);
 		
 		return result;
 	}

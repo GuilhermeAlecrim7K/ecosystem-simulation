@@ -19,7 +19,7 @@ public abstract class Predator extends Animal {
 	@Override
 	public Map<Integer, Animal> interactWith(Prey prey) {
 		Map<Integer, Animal> result = new LinkedHashMap<>();
-		result.put(this.currentLocation, this);
+		result.put(this.nextLocation, this);
 		return result;
 	}
 }

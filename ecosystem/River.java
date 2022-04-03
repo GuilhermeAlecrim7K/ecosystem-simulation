@@ -1,7 +1,6 @@
 package ecosystem;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,7 @@ public class River {
 	private List<Integer> indexesOfNullLocations;
 	
 	public River(Integer riverLength) {
-		location = new ArrayList<>(riverLength);
+		location = new ArrayList<>(riverLength + 1);
 		indexesOfNullLocations = new LinkedList<>();
 		instantiateAnimals();
 	}
@@ -55,7 +54,6 @@ public class River {
 	}
 
 	private void randomProcess() {
-		Map<Integer, Animal> indexAnimalPairs;
 		for (int i = 0; i < location.size(); i++) {
 			i = getLocationOfNextAnimalStartingWith(i);
 			Animal currentAnimal = location.get(i);
@@ -65,14 +63,21 @@ public class River {
 				currentAnimal.commitChangeToLocation();
 			}
 			else {
+				Map<Integer, Animal> indexAnimalPairs;
 				indexAnimalPairs = currentAnimal.interactWith(location.get(nextLocation));
-				Animal animal = indexAnimalPairs.remove(null);
-				animal.defineInitialPosition(getRandomNullLocation());
+				if (indexAnimalPairs.containsKey(null)){
+					Animal animal = indexAnimalPairs.remove(null);
+					animal.defineInitialPosition(getRandomNullLocation());
+				}
 				for (Map.Entry<Integer, Animal> entry: indexAnimalPairs.entrySet()) {
 					int index = entry.getKey();
-					animal = entry.getValue();
+					Animal animal = entry.getValue();
 					animal.commitChangeToLocation();
+					location.set(animal.getCurrentLocation(), null);
+					indexesOfNullLocations.add(animal.getCurrentLocation());
 					location.set(index, animal);
+					indexesOfNullLocations.remove(Integer.valueOf(index));
+					animal.commitChangeToLocation();
 				}
 			}			
 		}
@@ -100,4 +105,5 @@ public class River {
 		int randomIndex = indexesOfNullLocations.remove(random.nextInt(indexesOfNullLocations.size()));
 		return randomIndex;
 	}
+
 }

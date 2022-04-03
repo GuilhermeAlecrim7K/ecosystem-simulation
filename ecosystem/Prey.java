@@ -1,5 +1,7 @@
 package ecosystem;
 
+import java.util.LinkedHashMap;
+
 public abstract class Prey extends Animal {
 
 	public Prey(int currentLocation, int riverSize) {
@@ -7,13 +9,13 @@ public abstract class Prey extends Animal {
 	}
 
 	@Override
-	public void interactWith(Predator predator) {
+	public LinkedHashMap<Integer, Animal> interactWith(Predator predator) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void interactWith(Prey prey) {
+	public LinkedHashMap<Integer, Animal> interactWith(Prey prey) {
 		// TODO Auto-generated method stub
 
 	}

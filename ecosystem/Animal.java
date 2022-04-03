@@ -1,11 +1,12 @@
 package ecosystem;
 
+import java.util.Map;
 import java.util.Random;
 
 public abstract class Animal {
-	private int lastLocation;
-	private int currentLocation;
-	private int nextLocation;
+	protected int lastLocation;
+	protected int currentLocation;
+	protected int nextLocation;
 	private int riverSize;
 	private Random isGoingToMove;
 	private Random directionRandomizer;
@@ -18,6 +19,14 @@ public abstract class Animal {
 		directionRandomizer = new Random();
 	}
 	
+	protected int getLastLocation() {
+		return lastLocation;
+	}
+
+	protected int getCurrentLocation() {
+		return currentLocation;
+	}
+
 	public int getNextLocation() {
 		if (isGoingToMove.nextBoolean())
 			move();
@@ -29,9 +38,9 @@ public abstract class Animal {
 	private void move() {
 		do {
 			if (directionRandomizer.nextBoolean())
-				nextLocation++;
+				nextLocation = currentLocation +1;
 			else
-				nextLocation--;
+				nextLocation = currentLocation -1;
 		} while (isValidLocation(nextLocation));
 	}
 	
@@ -55,17 +64,21 @@ public abstract class Animal {
 		this.currentLocation = lastLocation;
 	}
 	
-	public void interactWith(Animal animal) {
+	public Map<Integer, Animal> interactWith(Animal animal) {
+		Map<Integer, Animal> result;
 		if (animal instanceof Predator)
-			interactWith((Predator) animal);
+			result = interactWith((Predator) animal);
 		else if (animal instanceof Prey)
-			interactWith((Prey) animal);
+			result = interactWith((Prey) animal);
 		else
-			System.out.println("Não foi possível identificar o tipo do animal passado para a função");
+			result = null;
+		return result;
 	}
 	
-	public abstract void interactWith(Predator predator);
+	public abstract Map<Integer, Animal> interactWith(Predator predator);
 	
-	public abstract void interactWith(Prey prey);
+	public abstract Map<Integer, Animal> interactWith(Prey prey);
+	
+	protected abstract Animal makeChild();
 	
 }

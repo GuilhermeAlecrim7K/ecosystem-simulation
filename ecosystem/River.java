@@ -40,13 +40,13 @@ public class River {
 			int animalCase = random.nextInt(3);
 			switch (animalCase) {
 			case Fish:
-				location.add(i, new Fish(i, location.size()));
+				location.add(new Fish(i, location.size()));
 				break;
 			case Bear:
-				location.add(i, new Bear(i, location.size()));
+				location.add(new Bear(i, location.size()));
 				break;
 			default:
-				location.add(i, null);
+				location.add(null);
 				indexOfNullLocations.add(i);
 				break;
 			}
@@ -64,6 +64,7 @@ public class River {
 				else 
 					currentAnimal.interactWith(location.get(nextLocation));
 			}
+			
 		}
 	}
 	

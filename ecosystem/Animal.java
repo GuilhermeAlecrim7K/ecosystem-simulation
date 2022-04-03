@@ -1,5 +1,6 @@
 package ecosystem;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -7,23 +8,26 @@ public abstract class Animal {
 	protected int lastLocation;
 	protected int currentLocation;
 	protected int nextLocation;
-	private int riverSize;
+	protected int riverSize;
 	private Random isGoingToMove;
 	private Random directionRandomizer;
 	
 	public Animal(int currentLocation, int riverSize) {
-		this.lastLocation = -1;
-		this.currentLocation = currentLocation;
-		this.riverSize = riverSize;
-		isGoingToMove = new Random();
-		directionRandomizer = new Random();
+		this(riverSize);
+		defineInitialPosition(currentLocation);
 	}
 	
-	protected int getLastLocation() {
+	public Animal(int riverSize) {
+		this.riverSize = riverSize;
+		isGoingToMove = new Random();
+		directionRandomizer = new Random();		
+	}
+	
+	public int getLastLocation() {
 		return lastLocation;
 	}
 
-	protected int getCurrentLocation() {
+	public int getCurrentLocation() {
 		return currentLocation;
 	}
 
@@ -53,6 +57,7 @@ public abstract class Animal {
 	
 	private void stay() {
 		nextLocation = currentLocation;
+		lastLocation = currentLocation;
 	}
 	
 	public void commitChangeToLocation() {
@@ -62,6 +67,7 @@ public abstract class Animal {
 	
 	public void revertChangeToLocation() {
 		this.currentLocation = lastLocation;
+		
 	}
 	
 	public Map<Integer, Animal> interactWith(Animal animal) {
@@ -80,5 +86,26 @@ public abstract class Animal {
 	public abstract Map<Integer, Animal> interactWith(Prey prey);
 	
 	protected abstract Animal makeChild();
+	
+	protected Map<Integer, Animal> interactWithSameType(Animal animal) {
+		this.stay();
+		
+		//return makeChild();
+		
+		stay();
+		Map<Integer, Animal> result = new LinkedHashMap<>();
+		result.put(this.currentLocation, this);
+		result.put(animal.currentLocation, animal);
+		Animal newCub = makeChild();
+		result.put(null, newCub);
+		
+		return result;
+	}
+
+	public void defineInitialPosition(int initialPosition) {
+		this.lastLocation = initialPosition;
+		this.currentLocation = initialPosition;
+		this.nextLocation = initialPosition;
+	}
 	
 }

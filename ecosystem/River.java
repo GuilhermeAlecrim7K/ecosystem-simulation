@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class River {
 	private List<Animal> location;
-	private List<Integer> indexOfNullLocations;
+	private List<Integer> indexesOfNullLocations;
 	
 	public River(Integer riverLength) {
 		location = new ArrayList<>(riverLength);
-		indexOfNullLocations = new LinkedList<>();
+		indexesOfNullLocations = new LinkedList<>();
 		instantiateAnimals();
 	}
 	
@@ -47,34 +48,56 @@ public class River {
 				break;
 			default:
 				location.add(null);
-				indexOfNullLocations.add(i);
+				indexesOfNullLocations.add(i);
 				break;
 			}
 		}
 	}
 
 	private void randomProcess() {
+		Map<Integer, Animal> indexAnimalPairs;
 		for (int i = 0; i < location.size(); i++) {
-			//callAnimalAction() {
-			if (location.get(i) != null) {
-				Animal currentAnimal = location.get(i);
-				int nextLocation = currentAnimal.getNextLocation();
-				if (nextLocationIsEmpty(nextLocation)) 
-					currentAnimal.commitChangeToLocation();
-				else 
-					currentAnimal.interactWith(location.get(nextLocation));
+			i = getLocationOfNextAnimalStartingWith(i);
+			Animal currentAnimal = location.get(i);
+			int nextLocation = currentAnimal.getNextLocation();
+			if (nextLocationIsEmpty(nextLocation)) {
+				updateLocation(currentAnimal);
+				currentAnimal.commitChangeToLocation();
 			}
-			
+			else {
+				indexAnimalPairs = currentAnimal.interactWith(location.get(nextLocation));
+				Animal animal = indexAnimalPairs.remove(null);
+				animal.defineInitialPosition(getRandomNullLocation());
+				for (Map.Entry<Integer, Animal> entry: indexAnimalPairs.entrySet()) {
+					int index = entry.getKey();
+					animal = entry.getValue();
+					animal.commitChangeToLocation();
+					location.set(index, animal);
+				}
+			}			
 		}
 	}
 	
+	private void updateLocation(Animal animal) {
+		location.set(animal.getCurrentLocation(), null);
+		animal.commitChangeToLocation();
+		location.set(animal.getCurrentLocation(), animal);
+	}
+
+	private int getLocationOfNextAnimalStartingWith(int index) {
+		while(location.get(index) == null) {
+			index++;
+		}
+		return index;
+	}
+
 	private boolean nextLocationIsEmpty(Integer index) {
 		return location.get(index) == null;
 	}
 
 	private Integer getRandomNullLocation() {
 		Random random = new Random();
-		int randomIndex = indexOfNullLocations.get(random.nextInt(indexOfNullLocations.size()));
+		int randomIndex = indexesOfNullLocations.remove(random.nextInt(indexesOfNullLocations.size()));
 		return randomIndex;
 	}
 }

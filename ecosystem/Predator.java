@@ -11,21 +11,15 @@ public abstract class Predator extends Animal {
 
 	@Override
 	public Map<Integer, Animal> interactWith(Predator predator) {
-		Map<Integer, Animal> result = new LinkedHashMap<>();
-		//TODO: take the location of both objects and 
-		result.put(this.lastLocation, this);
-		result.put(null, predator);
-		Animal newCub = makeChild();
-		result.put(null, newCub);
-		
+		Map<Integer, Animal> result;
+		result = interactWithSameType(predator);
 		return result;
 	}
 	
 	@Override
 	public Map<Integer, Animal> interactWith(Prey prey) {
 		Map<Integer, Animal> result = new LinkedHashMap<>();
-		
-		
+		result.put(this.currentLocation, this);
 		return result;
 	}
 }

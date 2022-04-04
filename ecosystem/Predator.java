@@ -9,6 +9,10 @@ public abstract class Predator extends Animal {
 		super(currentLocation, riverSize);
 	}
 
+	public Predator(int riverSize) {
+		super(riverSize);
+	}
+
 	@Override
 	public Map<Integer, Animal> interactWith(Predator predator) {
 		Map<Integer, Animal> result;

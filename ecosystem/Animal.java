@@ -5,9 +5,7 @@ import java.util.Map;
 import java.util.Random;
 
 public abstract class Animal {
-	protected int lastLocation;
-	protected int currentLocation;
-	protected int nextLocation;
+	protected int lastLocation, currentLocation, nextLocation;
 	protected int riverSize;
 	private Random isGoingToMove;
 	private Random directionRandomizer;

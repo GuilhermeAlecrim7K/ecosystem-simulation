@@ -56,14 +56,13 @@ public class River {
 	}
 
 	private void randomProcess() {
-		for (int i = 0; i < riverLength; i++) {
-			if (location.get(i) != null)
-				callAnimalAction(i);
+		for (Animal animal : location) {
+			if (animal != null)
+				callAnimalAction(animal);
 		}
 	}
 	
-	private void callAnimalAction (int indexInRiver) {
-		Animal currentAnimal = location.get(indexInRiver);
+	private void callAnimalAction (Animal currentAnimal) {
 		int nextLocation = currentAnimal.getNextLocation();
 		
 		if (nextLocationIsSameOrEmpty(currentAnimal, nextLocation)) 

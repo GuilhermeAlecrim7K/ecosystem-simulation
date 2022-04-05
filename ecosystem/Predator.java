@@ -1,7 +1,9 @@
 package ecosystem;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.AbstractMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map.Entry;
 
 public abstract class Predator extends Animal {
 
@@ -14,16 +16,17 @@ public abstract class Predator extends Animal {
 	}
 
 	@Override
-	public Map<Integer, Animal> interactWith(Predator predator) {
-		Map<Integer, Animal> result;
+	public List<Entry<Integer, Animal>> interactWith(Predator predator) {
+		List<Entry<Integer, Animal>> result;
 		result = interactWithSameType(predator);
 		return result;
 	}
 	
 	@Override
-	public Map<Integer, Animal> interactWith(Prey prey) {
-		Map<Integer, Animal> result = new LinkedHashMap<>();
-		result.put(this.nextLocation, this);
+	public List<Entry<Integer, Animal>> interactWith(Prey prey) {
+		List<Entry<Integer, Animal>> result = new LinkedList<>();
+		Entry<Integer,Animal> entry = new AbstractMap.SimpleEntry<>(this.nextLocation, this);
+		result.add(entry);
 		return result;
 	}
 }

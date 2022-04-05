@@ -1,7 +1,10 @@
 package ecosystem;
 
-import java.util.LinkedHashMap;
+import java.util.AbstractMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 public abstract class Animal {
@@ -43,14 +46,14 @@ public abstract class Animal {
 				nextLocation = currentLocation +1;
 			else
 				nextLocation = currentLocation -1;
-		} while (isValidLocation(nextLocation));
+		} while (isNotValidLocation(nextLocation));
 	}
 	
-	private boolean isValidLocation(int coordinate) {
+	private boolean isNotValidLocation(int coordinate) {
 		if (coordinate >= 0 && coordinate < riverSize)
-			return true;
-		else
 			return false;
+		else
+			return true;
 	}
 	
 	private void stay() {
@@ -63,8 +66,8 @@ public abstract class Animal {
 		this.currentLocation = nextLocation;
 	}
 	
-	public Map<Integer, Animal> interactWith(Animal animal) {
-		Map<Integer, Animal> result;
+	public List<Map.Entry<Integer, Animal>> interactWith(Animal animal) {
+		List<Map.Entry<Integer, Animal>> result;
 		if (animal instanceof Predator)
 			result = interactWith((Predator) animal);
 		else if (animal instanceof Prey)
@@ -74,19 +77,18 @@ public abstract class Animal {
 		return result;
 	}
 	
-	public abstract Map<Integer, Animal> interactWith(Predator predator);
+	public abstract List<Entry<Integer, Animal>> interactWith(Predator predator);
 	
-	public abstract Map<Integer, Animal> interactWith(Prey prey);
+	public abstract List<Entry<Integer, Animal>> interactWith(Prey prey);
 	
 	protected abstract Animal makeChild();
 	
-	protected Map<Integer, Animal> interactWithSameType(Animal animal) {
+	protected List<Entry<Integer, Animal>> interactWithSameType(Animal animal) {
 		stay();
-		Map<Integer, Animal> result = new LinkedHashMap<>();
-		result.put(this.currentLocation, this);
 		Animal newChild = makeChild();
-		result.put(null, newChild);
-		
+		List<Entry<Integer, Animal>> result = new LinkedList<>();
+		Entry<Integer, Animal> entry = new AbstractMap.SimpleEntry<Integer, Animal>(null, newChild);
+		result.add(entry);
 		return result;
 	}
 

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Map.Entry;
 
 public class River {
 	private List<Animal> location;
@@ -56,68 +57,74 @@ public class River {
 
 	private void randomProcess() {
 		for (int i = 0; i < riverLength; i++) {
-			i = getLocationOfNextAnimalStartingWith(i);
-			callAnimalAction(i);
+			if (location.get(i) != null)
+				callAnimalAction(i);
 		}
-	}
-	
-	private int getLocationOfNextAnimalStartingWith(int index) {
-		while(location.get(index) == null) {
-			index++;
-		}
-		return index;
 	}
 	
 	private void callAnimalAction (int indexInRiver) {
 		Animal currentAnimal = location.get(indexInRiver);
 		int nextLocation = currentAnimal.getNextLocation();
 		
-		if (nextLocationIsEmpty(nextLocation)) 
-			updateLocation(currentAnimal);		
-		else {
+		if (nextLocationIsSameOrEmpty(currentAnimal, nextLocation)) 
+			updateLocation(currentAnimal, nextLocation);		
+		else
 			makeAnimalsInteract(currentAnimal, location.get(nextLocation));
-		}			
 	}
 	
-	private void makeAnimalsInteract(Animal currentAnimal, Animal nextAnimal) {
-		Map<Integer, Animal> interactionResults = currentAnimal.interactWith(nextAnimal);
-		if (hasNewAnimal(interactionResults)){
-			Animal animal = interactionResults.remove(null);
-			animal.defineInitialPosition(getRandomNullLocation());
-		}				
-		for (Map.Entry<Integer, Animal> entry: interactionResults.entrySet()) {
-			int index = entry.getKey();
-			Animal animal = entry.getValue();
-			location.set(animal.getCurrentLocation(), null);
-			indexesOfNullLocations.add(animal.getCurrentLocation());
-			location.set(index, animal);
-			indexesOfNullLocations.remove(Integer.valueOf(index));
-			animal.commitChangeToLocation();
-		}
+	private boolean nextLocationIsSameOrEmpty(Animal animal, Integer nextLocation) {
+		return animal.getCurrentLocation() == nextLocation || location.get(nextLocation) == null;
 	}
 	
-	private boolean hasNewAnimal(Map<Integer, Animal> interactionResults) {
-		return interactionResults.containsKey(null);
-	}
-	
-	private boolean nextLocationIsEmpty(Integer index) {
-		return location.get(index) == null;
-	}
-	
-	private void updateLocation(Animal animal) {
+	private void updateLocation(Animal animal, int nextLocation) {
 		int currentLocation = animal.getCurrentLocation();
-		// CANNOT CALL METHOD -> int nextLocation = animal.getNextLocation();
 		location.set(currentLocation, null);
 		indexesOfNullLocations.add(animal.getCurrentLocation());
 		location.set(nextLocation, animal);
 		indexesOfNullLocations.remove(Integer.valueOf(nextLocation));
 		animal.commitChangeToLocation();
 	}
+	
+	private void makeAnimalsInteract(Animal currentAnimal, Animal nextAnimal) {
+		List<Entry<Integer, Animal>> interactionResults = currentAnimal.interactWith(nextAnimal);
+		if (hasNewAnimal(interactionResults))
+			putInRiver(interactionResults.remove(0).getValue());				
+		for (Map.Entry<Integer, Animal> entry: interactionResults) {
+			Animal animal = entry.getValue();
+			int nextLocation = entry.getKey();
+			updateLocation(animal, nextLocation);
+		}
+	}
+	
+	private void putInRiver(Animal newAnimal) {
+		Integer position = getRandomNullLocation();
+		if (position != null) {
+			newAnimal.defineInitialPosition(position);
+			updateLocation(newAnimal, newAnimal.getCurrentLocation());
+		}
+	}
+	
+	private boolean hasNewAnimal(List<Entry<Integer, Animal>> interactionResults) {
+		for (Entry<Integer, Animal> animal: interactionResults) {
+			if (animal.getKey() == null)
+				return true;
+		}
+		return false;
+	}
 
 	private Integer getRandomNullLocation() {
 		Random random = new Random();
-		int randomIndex = indexesOfNullLocations.remove(random.nextInt(indexesOfNullLocations.size()));
+		Integer randomIndex;
+		int listSize = indexesOfNullLocations.size();
+		if (listSize > 0)
+			randomIndex = indexesOfNullLocations.remove(random.nextInt(listSize));
+		else
+			randomIndex = null;
 		return randomIndex;
+	}
+	
+	public List<Animal> getLocation(){
+		return this.location;
 	}
 
 }
